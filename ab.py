@@ -1,41 +1,22 @@
+import PySimpleGUI as sg
+from klases import Plaukts
 
 
-class Auglis
-  def __init__(self, number, age, name);
-    self.age = age
-    self.number = number
-    self.name = name
-user = Auglis(2,3,"Ābols")
-print(Auglis.number)             // Dārza augļu klase
+sg.theme('Dark Blue 3')  # please make your windows colorful
 
-class Dārzenis
-  def __init__(self, number, age, name)
-    self.number = number
-    self.age = age
-    self.name = name
+layout = [[sg.Text('Your typed chars appear here:'), sg.Text(size=(12,1), key='-OUTPUT-')],
+          [sg.Input(key='-IN-')],
+          [sg.Button('Show'), sg.Button('Exit')]]
 
-user = Auglis(3,3,"Burkāns")
-print(Auglis.number)        // Dārza dārzeņu klase
-// ka veikt datu ievadi no malas
+window = sg.Window('Window Title', layout)
 
- Fruit = []
-Vegitable = []
-
-
-while True:
-    print("Enter 'v' for vegetable, 'f' for fruit, or 'q' to quit:")
-    choice = input()
-
-    if choice == 'q':
+while True:  # Event Loop
+    event, values = window.read()
+    print(event, values)
+    if event == sg.WIN_CLOSED or event == 'Exit':
         break
-    elif choice == 'v':
-        vegetable = input("Enter a vegetable: ")
-        vegetables.append(vegetable)
-    elif choice == 'f':
-        fruit = input("Enter a fruit: ")
-        fruits.append(fruit)
-    else:
-        print("Invalid choice. Please enter 'v', 'f', or 'q'.")
+    if event == 'Show':
+        # change the "output" element to be the value of "input" element
+        window['-OUTPUT-'].update(values['-IN-'])
 
-print("Entered vegetables:", vegetables)
-print("Entered fruits:", fruits)
+window.close()
