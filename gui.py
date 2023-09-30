@@ -1,3 +1,15 @@
 import PySimpleGUI as sg
 
-sg.popup(sg.popup_get_text("Ievadiet augli vai dārzeni", background_color="black",text_color="white", location=(800,400)))
+layout = [
+    [sg.B("Auglis", button_color="red")],
+    [sg.B("Dārzenis", button_color="orange")]
+]
+
+window = sg.Window("My app",layout)
+event, values = window.read()
+if event == "Auglis":
+    sg.popup("Kāds Auglis?")
+elif event == "Dārzenis":
+    sg.popup("Kāds Dārzenis?")
+
+print(event, values)
