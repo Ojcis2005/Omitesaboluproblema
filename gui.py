@@ -14,38 +14,20 @@ class Product:
         else:
             print(f"Not enough {self.name} available for consumption.")
 
-    def make_jam(self, products):
-        if self.quantity >= 2:  # Require 2 kg of the product to make 1 kg of jam
-            self.quantity -= 2
-            jam_name = f"Jam from {self.name}"
-            jam_product = Product(jam_name, 1.0)
-            products.append(jam_product)
-        else:
-            print(f"Not enough {self.name} available to make jam.")
-
     def __str__(self):
         return f"{self.name} ({self.quantity} kg)"
 
 def create_layout(products):
     product_list = [str(product) for product in products]
+    sg.theme('DarkGreen4')  # Set the background color to green
     layout = [
         [sg.Text('Product Name:'), sg.InputText(key='product_name')],
         [sg.Text('Product Quantity (kg):'), sg.InputText(key='product_quantity')],
-        [sg.Button('Add Product'), sg.Button('Consume Product'), sg.Button('Edit Product')],
+        [sg.Button('Add Product', button_color=('white', 'red')), sg.Button('Consume Product', button_color=('white', 'red')),
+         sg.Button('Make Jam', button_color=('white', 'red')), sg.Button('Edit Product', button_color=('white', 'red'))],
         [sg.Text('Product List:')],
         [sg.Listbox(values=product_list, size=(40, 6), key='product_list')],
-        [sg.TabGroup([[
-            sg.Tab('Make Jam', create_jam_layout(products), key='-TABJAM-')
-        ]])]
-    ]
-    return layout
-
-def create_jam_layout(products):
-    product_names = [product.name for product in products]
-    layout = [
-        [sg.Text('Select a product to make jam from:')],
-        [sg.Combo(product_names, key='selected_product')],
-        [sg.Button('Make Jam')],
+        [sg.Button('Exit', button_color=('white', 'red'))],  # Change the exit button color to red
     ]
     return layout
 
@@ -56,7 +38,7 @@ def main():
     while True:
         event, values = window.read()
 
-        if event == sg.WIN_CLOSED:
+        if event == sg.WIN_CLOSED or event == 'Exit':
             break
 
         if event == 'Add Product':
@@ -78,6 +60,20 @@ def main():
                 product_list = [str(product) for product in products]
                 window['product_list'].update(values=product_list)
 
+        if event == 'Make Jam':
+            selected_product = window['product_list'].get()
+            if selected_product:
+                product_info = selected_product[0]
+                name = product_info.split(' (')[0]  # Extract product name
+                quantity = float(values['product_quantity']) if values['product_quantity'] else 0.0
+                for product in products:
+                    if product.name == name:
+                        jam_product = product.make_jam(quantity)
+                        if jam_product:
+                            products.append(jam_product)
+                product_list = [str(product) for product in products]
+                window['product_list'].update(values=product_list)
+
         if event == 'Edit Product':
             selected_product = window['product_list'].get()
             if selected_product:
@@ -90,14 +86,6 @@ def main():
                             product.name = new_name
                     product_list = [str(product) for product in products]
                     window['product_list'].update(values=product_list)
-
-        if event == 'Make Jam':
-            selected_product_name = values['selected_product']
-            for product in products:
-                if product.name == selected_product_name:
-                    product.make_jam(products)
-            product_list = [str(product) for product in products]
-            window['product_list'].update(values=product_list)
 
     window.close()
 
